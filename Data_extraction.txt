@@ -1,0 +1,104 @@
+using HtmlAgilityPack;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+
+namespace ScrapeWebPage
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+           
+            Console.SetBufferSize(90, 1800);
+            Console.WriteLine("***************************Begin***********************************");
+            HtmlAgilityPack.HtmlWeb web = new HtmlAgilityPack.HtmlWeb();
+            HtmlAgilityPack.HtmlDocument doc = web.Load("http://en.wikipedia.org/wiki/National_Football_League");
+     
+            List<string> image_links = new List<string>();
+            
+
+               foreach (HtmlNode link in doc.DocumentNode.SelectNodes("//img"))
+               {
+                    image_links.Add(link.GetAttributeValue("src", ""));
+
+                }
+
+            int rowcount = 1;
+            int cellcount = 0;
+            List<string> cells = new List<string>();         
+            List<string> club = new List<string>();
+            List<string> city = new List<string>();
+            List<string> stadium = new List<string>();
+            List<string> capacity = new List<string>();
+            List<string> coords = new List<string>();
+            List<string> fseason = new List<string>();
+            List<string> coach = new List<string>();
+            foreach (HtmlNode table in doc.DocumentNode.SelectNodes("//table[@class='navbox plainrowheaders wikitable']"))
+                        {
+                                      
+                            foreach (HtmlNode row in table.SelectNodes("tr"))
+                            {
+                                    
+                                foreach (HtmlNode cell in row.SelectNodes("th|td"))
+                                {
+                        cellcount++;
+                    
+                        cells.Add(cell.InnerText);
+                   
+
+                               }
+                            }
+                        }
+            Console.WriteLine("Clean_Data");
+            Console.WriteLine("********************************************************************");
+            cells.RemoveRange(0, 10);//remove a range of items
+            cells.RemoveAt(28);
+            cells.RemoveAt(68);
+            cells.RemoveAt(97);
+            cells.RemoveAt(126);         
+            cells.RemoveAt(127);
+            cells.RemoveAt(156);
+            cells.RemoveAt(185);
+            cells.RemoveAt(214);
+       
+                for (int n = 0; n < 224; n+=7)
+                {
+                    //Group items in separate arrays
+                    club.Add(cells[n]);
+                    city.Add(cells[n + 1]);
+                    stadium.Add(cells[n + 2]);
+                    capacity.Add(cells[n + 3]);
+                    coords.Add(cells[n + 4]);
+                    fseason.Add(cells[n + 5]);
+                    coach.Add(cells[n + 6]);
+                }
+                     
+          
+            //data
+            for (int i = 0; i < coach.Count; i++)
+                                           {
+           
+                Console.WriteLine(club[i]);
+                Console.WriteLine(city[i]);
+                Console.WriteLine(stadium[i]);
+                Console.WriteLine(capacity[i]);
+                Console.WriteLine(coords[i]);
+                Console.WriteLine(fseason[i]);
+                Console.WriteLine(coach[i]);
+
+
+            }
+                                          
+            Console.WriteLine("All Imgage Links");
+            Console.WriteLine(string.Join(", ", image_links));
+            Console.WriteLine("***************************End***********************************");
+            Console.ReadLine();
+
+        }
+    }
+}
